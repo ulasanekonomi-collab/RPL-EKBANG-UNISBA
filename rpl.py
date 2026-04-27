@@ -54,25 +54,45 @@ if st.button("Analisis Potensi Saya"):
     else:
         st.success(f"🚀 Hasil Analisis: Anda memiliki potensi tinggi untuk program RPL di bidang {bidang}!")
         st.balloons()
-# Ganti bagian multiselect MK yang kaku tadi dengan ini:
+# --- REVISI MODUL 2: BAGIAN KLAIM BERBASIS NARASI ---
 
-st.subheader("2. Portofolio Pengalaman")
-st.info("Pilih bidang pengalaman yang Anda miliki. Kami akan membantu memetakan ke kurikulum kami.")
-
-bidang_exp = st.selectbox("Sektor Pengalaman Dominan:", 
-                         ["Pilih Sektor", "Perbankan & Keuangan", "Wirausaha/UMKM", "Administrasi Publik", "Analisis Data/Statistik"])
-
-if bidang_exp == "Perbankan & Keuangan":
-    st.write("👉 **Kompetensi yang dapat diakui:** Analisis Kredit, Manajemen Risiko, Operasional Bank.")
-    st.caption("Potensi Mata Kuliah: Manajemen Perbankan, Ekonomi Moneter, Akuntansi.")
+with tab2:
+    st.header("Formulir E-Portofolio RPL")
     
-elif bidang_exp == "Wirausaha/UMKM":
-    st.write("👉 **Kompetensi yang dapat diakui:** Perencanaan Bisnis, Strategi Pemasaran, Kelayakan Investasi.")
-    st.caption("Potensi Mata Kuliah: Kewirausahaan, Manajemen Pemasaran, Evaluasi Proyek.")
+    with st.form("form_rpl_narasi"):
+        st.subheader("1. Identitas Pelamar")
+        nama = st.text_input("Nama Lengkap")
+        nik = st.text_input("NIK", max_chars=16)
 
-# Biarkan user mengisi narasi kompetensi, bukan memilih kode MK yang membingungkan
-kemampuan = st.multiselect("Kemampuan apa saja yang Anda kuasai secara profesional?", 
-                          ["Menyusun Laporan Keuangan", "Melakukan Analisis Pasar", "Mengelola SDM", "Menggunakan Software Statistik", "Perencanaan Anggaran"])
+        st.divider()
 
-deskripsi_pengalaman = st.text_area("Deskripsikan detail pekerjaan/tugas yang mendukung kemampuan tersebut:", 
-                                     placeholder="Ceritakan aktivitas harian Anda yang relevan...")
+        # Bagian ini yang kita buat jadi Free-Text
+        st.subheader("2. Deskripsi Profesional")
+        st.info("Tuliskan bidang pekerjaan dan keahlian utama yang Anda kuasai. Penjelasan ini akan membantu kami memetakan pengalaman Anda ke mata kuliah yang relevan.")
+        
+        sektor_mandiri = st.text_input("Sektor/Bidang Pekerjaan Anda", 
+                                      placeholder="Contoh: Perbankan Syariah, Industri Kreatif, Aparatur Desa, dll.")
+        
+        keahlian_utama = st.text_area("Sebutkan Kemampuan/Keahlian Utama Anda", 
+                                      placeholder="Contoh: Penyusunan laporan keuangan, Manajemen stok barang, Analisis risiko kredit, dll.",
+                                      help="Sebutkan minimal 3 kemampuan teknis yang Anda kuasai di pekerjaan.")
+
+        narasi_portofolio = st.text_area("Uraikan Pengalaman Kerja Anda (Kontekstual)", 
+                                         placeholder="Ceritakan detail tugas harian Anda yang menurut Anda setara dengan materi perkuliahan...",
+                                         height=200)
+
+        st.divider()
+
+        st.subheader("3. Bukti Pendukung")
+        uploaded_files = st.file_uploader("Unggah Sertifikat, SK, atau Portofolio", accept_multiple_files=True)
+
+        st.warning("Pastikan data asli. Ketidaksesuaian data dapat membatalkan proses RPL.")
+        setuju = st.checkbox("Saya menjamin keaslian dokumen ini.")
+
+        btn_kirim = st.form_submit_button("Kirim Pengajuan")
+
+        if btn_kirim:
+            if not setuju:
+                st.error("Centang dulu pernyataan keasliannya ya, Kang.")
+            else:
+                st.success("Data berhasil direkam. Tim Asesor akan melakukan pemetaan (mapping) terhadap narasi Anda.")
