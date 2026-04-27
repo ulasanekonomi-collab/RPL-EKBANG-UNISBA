@@ -1,9 +1,7 @@
 import streamlit as st
-import streamlit as st
-import pandas as pd  # <--- Tambah ini
-import os            # <--- Tambah ini untuk urusan file
-# Tambahkan satu nama tab lagi
-tab1, tab2, tab3 = st.tabs(["📋 Informasi & Cek Kelayakan", "📤 Pengajuan E-Portofolio", "📊 Panel Asesor"])
+import pandas as pd
+import os
+
 # 1. KONFIGURASI HALAMAN
 st.set_page_config(
     page_title="RPL Unisba - Yuhkasun", 
@@ -11,11 +9,10 @@ st.set_page_config(
     layout="wide"
 )
 
-# 2. HEADER & LOGO
+# 2. HEADER TUNGGAL (Hanya satu di sini, Kang!)
 col1, col2 = st.columns([1, 5])
 with col1:
-    # Menggunakan URL logo Unisba
-    st.image("https://id.wikipedia.org/wiki/Berkas:Lambang-Universitas_Islam_Bandung.png", width=100) 
+    st.image("https://upload.wikimedia.org/wikipedia/id/8/8c/Logo_Unisba.png", width=100) 
 with col2:
     st.title("Portal Rekognisi Pembelajaran Lampau (RPL)")
     st.subheader("Universitas Islam Bandung")
@@ -23,9 +20,13 @@ with col2:
 st.divider()
 
 # 3. NAVIGASI TAB
-tab1, tab2 = st.tabs(["📋 Informasi & Cek Kelayakan", "📤 Pengajuan E-Portofolio"])
+tab1, tab2, tab3 = st.tabs([
+    "📋 Informasi & Cek Kelayakan", 
+    "📤 Pengajuan E-Portofolio", 
+    "📊 Panel Asesor"
+])
 
-# --- TAB 1: INFORMASI ---
+# --- TAB 1: INFORMASI & CEK KELAYAKAN ---
 with tab1:
     st.markdown("### 👋 Selamat Datang di Jalur RPL Tipe A")
     st.info("""
@@ -40,73 +41,49 @@ with tab1:
         **Manfaat Utama:**
         * **Efisiensi Waktu:** Pengalaman kerja dikonversi menjadi SKS.
         * **Biaya Hemat:** Mengurangi jumlah mata kuliah yang harus diambil.
-        * **Pengakuan Profesional:** Kompetensi lapangan Anda dihargai secara akademis.
         """)
 
     st.markdown("---")
     st.subheader("🔍 Cek Kelayakan Awal")
-    st.write("Cek potensi Anda sebelum melakukan pendaftaran resmi.")
-    
     c1, c2 = st.columns(2)
     with c1:
-        ijazah = st.selectbox("Ijazah Terakhir", ["Pilih Ijazah", "SMA/SMK/MA Sederajat", "Diploma (D1/D2/D3)", "Pernah Kuliah (Putus Studi)"])
+        ijazah = st.selectbox("Ijazah Terakhir", ["Pilih Ijazah", "SMA/SMK/MA Sederajat", "Diploma", "Putus Studi"])
         masa_kerja = st.number_input("Total Masa Kerja (Tahun)", min_value=0, max_value=40, step=1)
     with c2:
-        bidang_kerja = st.text_input("Bidang Pekerjaan Dominan", placeholder="Contoh: Perbankan, Administrasi, dll")
+        bidang_kerja = st.text_input("Bidang Pekerjaan Dominan", placeholder="Contoh: Perbankan, Administrasi")
 
     if st.button("Analisis Potensi Saya"):
-        if ijazah == "Pilih Ijazah":
-            st.error("Silakan pilih ijazah terakhir Anda.")
-        elif masa_kerja >= 2:
-            st.success(f"🚀 Luar Biasa! Pengalaman Anda di bidang {bidang_kerja} selama {masa_kerja} tahun memiliki potensi tinggi untuk dikonversi menjadi SKS.")
+        if masa_kerja >= 2:
+            st.success(f"🚀 Potensi Tinggi! Pengalaman di {bidang_kerja} sangat mendukung.")
             st.balloons()
         else:
-            st.warning("Berdasarkan pedoman, disarankan memiliki masa kerja minimal 2 tahun untuk hasil maksimal.")
+            st.warning("Disarankan minimal 2 tahun masa kerja sesuai pedoman.")
 
 # --- TAB 2: FORMULIR E-PORTOFOLIO ---
 with tab2:
     st.header("Formulir E-Portofolio RPL")
-    st.write("Isi narasi keahlian Anda secara mandiri di bawah ini.")
-
-    with st.form("form_pendaftaran_rpl"):
-        # Identitas
-        st.subheader("1. Identitas Pelamar")
-        nama_lengkap = st.text_input("Nama Lengkap (Sesuai Ijazah)")
-        nik_user = st.text_input("Nomor Induk Kependudukan (NIK)", max_chars=16)
+    
+    with st.form("form_rpl_utama"):
+        st.subheader("1. Identitas & Deskripsi")
+        nama_lengkap = st.text_input("Nama Lengkap")
+        nik_user = st.text_input("NIK", max_chars=16)
         
         st.divider()
-        
-        # Narasi Keahlian
-        st.subheader("2. Deskripsi Pengalaman Profesional")
-        st.caption("Ceritakan dunia kerja Anda dengan bahasa sendiri.")
-        
-        sektor_pekerjaan = st.text_input("Sektor/Bidang Pekerjaan", placeholder="Misal: Keuangan Mikro, Kewirausahaan Kuliner, dll")
-        keahlian_list = st.text_area("Sebutkan 3 Keahlian Utama Anda", placeholder="1. Analisis Laporan Keuangan\n2. Manajemen Operasional\n3. Strategi Pemasaran")
-        cerita_kerja = st.text_area("Uraikan Pengalaman Kerja Anda secara Detail", height=200, 
-                                    placeholder="Jelaskan tugas harian Anda yang menurut Anda setara dengan materi kuliah...")
+        sektor_pekerjaan = st.text_input("Sektor Pekerjaan")
+        keahlian_list = st.text_area("Sebutkan Keahlian Utama (List)")
+        cerita_kerja = st.text_area("Uraikan Pengalaman Kerja secara Detail", height=200)
         
         st.divider()
+        st.subheader("2. Bukti Dokumen")
+        uploaded_docs = st.file_uploader("Unggah Bukti (PDF/JPG)", accept_multiple_files=True)
         
-        # Upload Bukti
-        st.subheader("3. Unggah Bukti Kompetensi")
-        uploaded_docs = st.file_uploader("Unggah SK Kerja, Sertifikat, atau Portofolio (PDF/JPG)", accept_multiple_files=True)
-        
-        st.warning("PENTING: Pastikan semua data yang Anda masukkan adalah benar dan dokumen yang diunggah adalah asli.")
-        pernyataan = st.checkbox("Saya menjamin keaslian dokumen dan data yang saya kirimkan.")
-        
-        # Submit Button
+        pernyataan = st.checkbox("Saya menjamin keaslian dokumen.")
         submit_final = st.form_submit_button("Kirim Pengajuan RPL")
         
-if submit_final:
-            if not pernyataan:
-                st.error("Anda harus menyetujui pernyataan keaslian data.")
-            elif not nama_lengkap or not cerita_kerja:
-                st.error("Nama dan Deskripsi Pengalaman tidak boleh kosong.")
-            else:
-                # --- PROSES SIMPAN DATA (OPSI 2) ---
+        if submit_final:
+            if pernyataan and nama_lengkap:
+                # Logika Simpan ke CSV
                 nama_file = "data_pendaftar_rpl.csv"
-                
-                # Menyiapkan data baru dari input user
                 data_baru = {
                     "Nama": [nama_lengkap],
                     "NIK": [nik_user],
@@ -115,79 +92,45 @@ if submit_final:
                     "Narasi_Pengalaman": [cerita_kerja]
                 }
                 df_baru = pd.DataFrame(data_baru)
-
-                # Simpan ke CSV (Append jika file sudah ada)
+                
                 if not os.path.isfile(nama_file):
                     df_baru.to_csv(nama_file, index=False)
                 else:
                     df_baru.to_csv(nama_file, mode='a', index=False, header=False)
+                
+                st.success(f"Data {nama_lengkap} berhasil disimpan!")
+            else:
+                st.error("Mohon lengkapi data dan centang pernyataan keaslian.")
 
-                st.success(f"Alhamdulillah, data {nama_lengkap} telah berhasil disimpan!")
-                st.balloons()
-                st.info(f"Data tersimpan di file: {nama_file}")
-# 4. FOOTER (Catatan Pengembangan)
-st.divider()
-st.markdown(
-    """
-    <style>
-    .footer {
-        position: fixed;
-        left: 0;
-        bottom: 0;
-        width: 100%;
-        background-color: transparent;
-        color: gray;
-        text-align: center;
-        font-style: italic;
-        padding: 10px;
-    }
-    </style>
-    <div class="footer">
-    Dikembangkan oleh Yuhkasun © 2026
-    </div>
-    """, 
-    unsafe_allow_html=True
-)
 # --- TAB 3: PANEL ASESOR ---
 with tab3:
     st.header("Halaman Khusus Asesor")
-    st.write("Daftar pengajuan RPL yang perlu ditinjau.")
-
     nama_file = "data_pendaftar_rpl.csv"
 
     if os.path.exists(nama_file):
-        # Membaca data dari CSV
         df_admin = pd.read_csv(nama_file)
-        
-        # Menampilkan ringkasan statistik sederhana
         st.write(f"Total Pengajuan: **{len(df_admin)}**")
-        
-        # Menampilkan tabel data
         st.dataframe(df_admin, use_container_width=True)
         
         st.divider()
         st.subheader("Aksi Penilaian")
-        
-        # Fitur memilih pendaftar untuk dinilai
-        pilih_nama = st.selectbox("Pilih Pendaftar untuk Dinilai:", df_admin["Nama"].tolist())
+        pilih_nama = st.selectbox("Pilih Pendaftar:", df_admin["Nama"].tolist())
         
         if pilih_nama:
-            # Ambil data spesifik pendaftar yang dipilih
             user_data = df_admin[df_admin["Nama"] == pilih_nama].iloc[0]
+            st.info(f"**Narasi {pilih_nama}:**\n\n{user_data['Narasi_Pengalaman']}")
             
-            st.info(f"**Narasi Pengalaman {pilih_nama}:**\n\n{user_data['Narasi_Pengalaman']}")
-            
-            # Form Penilaian SKS
-            col_a, col_b = st.columns(2)
-            with col_a:
-                sks_diakui = st.number_input("Jumlah SKS yang Diakui", min_value=0, max_value=24, step=1)
-            with col_b:
-                keputusan = st.selectbox("Status Verifikasi", ["Menunggu", "Disetujui", "Ditolak", "Butuh Wawancara"])
-            
-            catatan_asesor = st.text_area("Catatan Tambahan Asesor")
+            c_a, c_b = st.columns(2)
+            with c_a:
+                sks = st.number_input("SKS Diakui", 0, 24)
+            with c_b:
+                status = st.selectbox("Status", ["Menunggu", "Disetujui", "Ditolak"])
             
             if st.button("Simpan Penilaian"):
-                st.success(f"Penilaian untuk {pilih_nama} berhasil disimpan!")
-                # (Nanti kita bisa buat sistem simpan penilaian ke file berbeda)
+                st.success("Penilaian berhasil dicatat!")
     else:
-        st.info("Belum ada data pendaftar yang masuk.")
+        st.info("Belum ada data pendaftar.")
+
+# 4. FOOTER
+st.divider()
+st.markdown("<p style='text-align: center; color: gray; font-style: italic;'>Dikembangkan oleh Yuhkasun © 2026</p>", unsafe_allow_html=True)
