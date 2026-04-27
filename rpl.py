@@ -1,7 +1,16 @@
 import streamlit as st
 import pandas as pd
 import os
-
+# Daftar MK dari Kurikulum OBE EP Unisba 2023 (Contoh Sampling)
+DB_KURIKULUM = [
+    {"kode": "EP101", "nama": "Pengantar Ekonomi Mikro", "sks": 3},
+    {"kode": "EP102", "nama": "Pengantar Ekonomi Makro", "sks": 3},
+    {"kode": "EP205", "nama": "Akuntansi Dasar", "sks": 3},
+    {"kode": "EP301", "nama": "Kewirausahaan", "sks": 2},
+    {"kode": "EP402", "nama": "Manajemen Keuangan", "sks": 3},
+    {"kode": "EP505", "nama": "Evaluasi Proyek", "sks": 3},
+    {"kode": "EP306", "nama": "Ekonomi Sektoral", "sks": 3},
+]
 # 1. KONFIGURASI HALAMAN
 st.set_page_config(
     page_title="RPL Unisba - Yuhkasun", 
