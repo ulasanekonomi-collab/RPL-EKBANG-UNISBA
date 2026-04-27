@@ -1,7 +1,11 @@
 import streamlit as st
 import pandas as pd
 import os
-# Daftar MK dari Kurikulum OBE EP Unisba 2023 (Contoh Sampling)
+
+# 1. KONFIGURASI HALAMAN
+st.set_page_config(page_title="RPL Unisba - Yuhkasun", page_icon="🎓", layout="wide")
+
+# 2. DATABASE KURIKULUM (Berdasarkan Dokumen OBE EP 2023)
 DB_KURIKULUM = [
     {"kode": "EP101", "nama": "Pengantar Ekonomi Mikro", "sks": 3},
     {"kode": "EP102", "nama": "Pengantar Ekonomi Makro", "sks": 3},
@@ -11,14 +15,8 @@ DB_KURIKULUM = [
     {"kode": "EP505", "nama": "Evaluasi Proyek", "sks": 3},
     {"kode": "EP306", "nama": "Ekonomi Sektoral", "sks": 3},
 ]
-# 1. KONFIGURASI HALAMAN
-st.set_page_config(
-    page_title="RPL Unisba - Yuhkasun", 
-    page_icon="🎓", 
-    layout="wide"
-)
 
-# 2. HEADER TUNGGAL (Hanya satu di sini, Kang!)
+# 3. HEADER
 col1, col2 = st.columns([1, 5])
 with col1:
     st.image("https://upload.wikimedia.org/wikipedia/id/8/8c/Logo_Unisba.png", width=100) 
@@ -28,148 +26,72 @@ with col2:
 
 st.divider()
 
-# 3. NAVIGASI TAB
-tab1, tab2, tab3 = st.tabs([
-    "📋 Informasi & Cek Kelayakan", 
-    "📤 Pengajuan E-Portofolio", 
-    "📊 Panel Asesor"
-])
+# 4. NAVIGASI TAB
+tab1, tab2, tab3 = st.tabs(["📋 Informasi", "📤 Pengajuan E-Portofolio", "📊 Panel Asesor"])
 
-# --- TAB 1: INFORMASI & CEK KELAYAKAN ---
+# --- TAB 1: INFORMASI ---
 with tab1:
-    st.markdown("### 👋 Selamat Datang di Jalur RPL Tipe A")
-    st.info("""
-    **Apa itu RPL Tipe A?** RPL adalah pengakuan atas Capaian Pembelajaran seseorang yang diperoleh dari 
-    **pendidikan nonformal, informal, dan/atau pengalaman kerja** sebagai dasar untuk melanjutkan pendidikan formal.
-    """)
-    
-    with st.expander("📖 Lihat Manfaat & Landasan Hukum"):
-        st.write("""
-        Program ini merujuk pada **Keputusan Direktur Jenderal Pendidikan Tinggi No. 112/B/KPT/2025**.
-        
-        **Manfaat Utama:**
-        * **Efisiensi Waktu:** Pengalaman kerja dikonversi menjadi SKS.
-        * **Biaya Hemat:** Mengurangi jumlah mata kuliah yang harus diambil.
-        """)
-
-    st.markdown("---")
-    st.subheader("🔍 Cek Kelayakan Awal")
+    st.info("**Apa itu RPL Tipe A?** Pengakuan pengalaman kerja menjadi SKS akademik (Juknis 2025).")
+    st.markdown("### 🔍 Cek Kelayakan Awal")
     c1, c2 = st.columns(2)
     with c1:
-        ijazah = st.selectbox("Ijazah Terakhir", ["Pilih Ijazah", "SMA/SMK/MA Sederajat", "Diploma", "Putus Studi"])
-        masa_kerja = st.number_input("Total Masa Kerja (Tahun)", min_value=0, max_value=40, step=1)
-    with c2:
-        bidang_kerja = st.text_input("Bidang Pekerjaan Dominan", placeholder="Contoh: Perbankan, Administrasi")
+        ijazah = st.selectbox("Ijazah Terakhir", ["Pilih", "SMA/SMK/MA", "Diploma", "Putus Kuliah"])
+        masa = st.number_input("Masa Kerja (Tahun)", min_value=0)
+    if st.button("Analisis Potensi"):
+        if masa >= 2: st.success("Potensi Tinggi!"); st.balloons()
 
-    if st.button("Analisis Potensi Saya"):
-        if masa_kerja >= 2:
-            st.success(f"🚀 Potensi Tinggi! Pengalaman di {bidang_kerja} sangat mendukung.")
-            st.balloons()
-        else:
-            st.warning("Disarankan minimal 2 tahun masa kerja sesuai pedoman.")
-
-# --- TAB 2: FORMULIR E-PORTOFOLIO ---
+# --- TAB 2: FORM PENDAFTARAN ---
 with tab2:
-    st.header("Formulir E-Portofolio RPL")
-    
-    with st.form("form_rpl_utama"):
-        st.subheader("1. Identitas & Deskripsi")
-        nama_lengkap = st.text_input("Nama Lengkap")
-        nik_user = st.text_input("NIK", max_chars=16)
-        
+    with st.form("form_rpl"):
+        nama = st.text_input("Nama Lengkap")
+        nik = st.text_input("NIK", max_chars=16)
+        sektor = st.text_input("Sektor Pekerjaan")
+        narasi = st.text_area("Ceritakan Pengalaman Kerja Anda secara Detail", height=150)
         st.divider()
-        sektor_pekerjaan = st.text_input("Sektor Pekerjaan")
-        keahlian_list = st.text_area("Sebutkan Keahlian Utama (List)")
-        cerita_kerja = st.text_area("Uraikan Pengalaman Kerja secara Detail", height=200)
-        
-        st.divider()
-        st.subheader("2. Bukti Dokumen")
-        uploaded_docs = st.file_uploader("Unggah Bukti (PDF/JPG)", accept_multiple_files=True)
-        
-        pernyataan = st.checkbox("Saya menjamin keaslian dokumen.")
-        submit_final = st.form_submit_button("Kirim Pengajuan RPL")
-        
-        if submit_final:
-            if pernyataan and nama_lengkap:
-                # Logika Simpan ke CSV
-                nama_file = "data_pendaftar_rpl.csv"
-                data_baru = {
-                    "Nama": [nama_lengkap],
-                    "NIK": [nik_user],
-                    "Sektor": [sektor_pekerjaan],
-                    "Keahlian": [keahlian_list],
-                    "Narasi_Pengalaman": [cerita_kerja]
-                }
-                df_baru = pd.DataFrame(data_baru)
-                
-                if not os.path.isfile(nama_file):
-                    df_baru.to_csv(nama_file, index=False)
-                else:
-                    df_baru.to_csv(nama_file, mode='a', index=False, header=False)
-                
-                st.success(f"Data {nama_lengkap} berhasil disimpan!")
-            else:
-                st.error("Mohon lengkapi data dan centang pernyataan keaslian.")
+        pernyataan = st.checkbox("Saya menjamin keaslian data.")
+        if st.form_submit_button("Kirim Pengajuan"):
+            if pernyataan and nama:
+                df = pd.DataFrame({"Nama":[nama], "NIK":[nik], "Sektor":[sektor], "Narasi_Pengalaman":[narasi]})
+                df.to_csv("data_pendaftar_rpl.csv", mode='a', index=False, header=not os.path.exists("data_pendaftar_rpl.csv"))
+                st.success("Data Berhasil Disimpan!")
 
-# --- TAB 3: PANEL ASESOR ---
+# --- TAB 3: PANEL ASESOR (INSTRUMEN CHECKLIST) ---
 with tab3:
     st.header("⚖️ Instrumen Asesmen RPL")
-    nama_file = "data_pendaftar_rpl.csv"
-
-    if os.path.exists(nama_file):
-        df_admin = pd.read_csv(nama_file)
-        pilih_nama = st.selectbox("Pilih Pendaftar untuk Dikaji:", df_admin["Nama"].tolist())
+    if os.path.exists("data_pendaftar_rpl.csv"):
+        df_admin = pd.read_csv("data_pendaftar_rpl.csv")
+        pilih_nama = st.selectbox("Pilih Pendaftar:", df_admin["Nama"].tolist())
         
         if pilih_nama:
-            user_data = df_admin[df_admin["Nama"] == pilih_nama].iloc[0]
-            
-            # --- TAMPILAN SIDE BY SIDE ---
-            col_data, col_check = st.columns([1, 1])
-            
-            with col_data:
-                st.subheader("📝 Data Pengalaman")
-                st.info(f"**Sektor:** {user_data['Sektor']}\n\n**Keahlian:** {user_data['Keahlian']}")
-                st.write("**Narasi Lengkap:**")
-                st.caption(user_data['Narasi_Pengalaman'])
-            
-            with col_check:
-                st.subheader("✅ Checklist Penyetaraan MK")
-                st.write("Pilih MK yang sesuai dengan narasi di samping:")
-                
-                # Checklist Instrumen
+            user = df_admin[df_admin["Nama"] == pilih_nama].iloc[0]
+            col_d, col_c = st.columns([1, 1])
+            with col_d:
+                st.info(f"**Narasi {pilih_nama}:**\n\n{user['Narasi_Pengalaman']}")
+            with col_c:
+                st.subheader("✅ Pairing Kurikulum")
                 mk_diakui = []
                 for mk in DB_KURIKULUM:
-                    check = st.checkbox(f"{mk['kode']} - {mk['nama']} ({mk['sks']} SKS)", key=mk['kode'])
-                    if check:
+                    if st.checkbox(f"{mk['nama']} ({mk['sks']} SKS)", key=mk['kode']):
                         mk_diakui.append(mk)
-                
-            st.divider()
-            
-            # --- HASIL OUTPUT SESUAI PERMINTAAN AKANG ---
-            st.subheader("📊 Hasil Rekomendasi RPL")
-            
-            # 1. MK yang Sesuai (Diakui)
-            total_sks_diakui = sum([m['sks'] for m in mk_diakui])
-            st.success(f"**1. Mata Kuliah yang Diakui (Sesuai Pengalaman):** {len(mk_diakui)} MK")
-            if mk_diakui:
-                df_diakui = pd.DataFrame(mk_diakui)
-                st.table(df_diakui)
-            
-            # 2. MK yang Harus Ditempuh
-            # (Logika: Semua MK di kurikulum dikurangi yang sudah diakui)
-            mk_harus_tempuh = [m for m in DB_KURIKULUM if m not in mk_diakui]
-            st.warning(f"**2. Mata Kuliah yang Harus Ditempuh:** {len(mk_harus_tempuh)} MK")
-            if mk_harus_tempuh:
-                df_sisa = pd.DataFrame(mk_harus_tempuh)
-                st.table(df_sisa)
-            
-            st.metric("Total SKS Diakui", f"{total_sks_diakui} SKS")
 
-            if st.button("Finalisasi & Cetak Hasil Asesmen"):
-                st.balloons()
-                st.write("📌 *Hasil asesmen siap dikirim ke bagian akademik untuk diterbitkan SK.*")
+            st.divider()
+            st.subheader("📊 Hasil Rekomendasi")
+            
+            # 1. MK DIAKUI
+            st.success("**1. Mata Kuliah yang Diakui (Sesuai Pengalaman)**")
+            if mk_diakui: st.table(pd.DataFrame(mk_diakui))
+            
+            # 2. MK WAJIB
+            mk_wajib = [m for m in DB_KURIKULUM if m not in mk_diakui]
+            st.warning("**2. Mata Kuliah yang Harus Ditempuh**")
+            if mk_wajib: st.table(pd.DataFrame(mk_wajib))
+            
+            # TOMBOL DOWNLOAD HASIL
+            res_df = pd.DataFrame({"Kategori":["Diakui", "Wajib"], "Daftar":[str(mk_diakui), str(mk_wajib)]})
+            st.download_button("📥 Download Hasil Asesmen (CSV)", res_df.to_csv().encode('utf-8'), f"RPL_{pilih_nama}.csv", "text/csv")
     else:
         st.info("Belum ada data pendaftar.")
-# 4. FOOTER
+
+# 5. FOOTER
 st.divider()
 st.markdown("<p style='text-align: center; color: gray; font-style: italic;'>Dikembangkan oleh Yuhkasun © 2026</p>", unsafe_allow_html=True)
