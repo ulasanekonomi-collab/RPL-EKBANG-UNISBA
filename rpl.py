@@ -2,6 +2,8 @@ import streamlit as st
 import streamlit as st
 import pandas as pd  # <--- Tambah ini
 import os            # <--- Tambah ini untuk urusan file
+# Tambahkan satu nama tab lagi
+tab1, tab2, tab3 = st.tabs(["📋 Informasi & Cek Kelayakan", "📤 Pengajuan E-Portofolio", "📊 Panel Asesor"])
 # 1. KONFIGURASI HALAMAN
 st.set_page_config(
     page_title="RPL Unisba - Yuhkasun", 
