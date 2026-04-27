@@ -1,12 +1,11 @@
 import streamlit as st
 
-# Setup Page (Supaya tampilannya Wide dan judul Tab-nya bagus)
+# 1. Konfigurasi Halaman
 st.set_page_config(page_title="RPL Unisba", page_icon="🎓", layout="wide")
 
-# --- HEADER SECTION ---
+# 2. Header
 col1, col2 = st.columns([1, 5])
 with col1:
-    # Pastikan file logo_unisba.png ada di folder yang sama, atau bisa di-comment dulu
     st.image("https://upload.wikimedia.org/wikipedia/id/8/8c/Logo_Unisba.png", width=100) 
 with col2:
     st.title("Portal Rekognisi Pembelajaran Lampau (RPL)")
@@ -14,85 +13,61 @@ with col2:
 
 st.divider()
 
-# --- MODUL 1: DESKRIPSI & INFORMASI ---
-st.markdown("### 👋 Selamat Datang di Jalur RPL Tipe A")
+# 3. Membuat Tab (Agar rapi dan tidak error)
+tab1, tab2 = st.tabs(["📋 Informasi & Cek Kelayakan", "📤 Pengajuan E-Portofolio"])
 
-st.info("""
-**Apa itu RPL Tipe A?** RPL adalah pengakuan atas Capaian Pembelajaran seseorang yang diperoleh dari **pendidikan nonformal, informal, dan/atau pengalaman kerja** sebagai dasar untuk melanjutkan pendidikan formal. 
-""")
-
-with st.expander("📖 Landasan Hukum & Manfaat", expanded=True):
-    st.write("""
-    Program ini merujuk pada **Keputusan Direktur Jenderal Pendidikan Tinggi No. 112/B/KPT/2025**.
+with tab1:
+    st.markdown("### 👋 Selamat Datang di Jalur RPL Tipe A")
+    st.info("RPL adalah pengakuan atas pengalaman kerja Anda menjadi SKS akademik.")
     
-    **Manfaat untuk Anda:**
-    * **Efisiensi Waktu:** Tidak perlu mengambil mata kuliah yang sudah Anda kuasai di lapangan.
-    * **Pengakuan Profesional:** Pengalaman kerja bertahun-tahun dihargai secara akademik.
-    * **Biaya Hemat:** SKS yang diakui akan mengurangi total biaya perkuliahan.
-    """)
+    with st.expander("📖 Lihat Manfaat & Landasan Hukum"):
+        st.write("Berdasarkan Keputusan Dirjen Dikti No. 112/B/KPT/2025.")
+        st.bullet_point("Efisiensi Waktu Kuliah")
+        st.bullet_point("Biaya Lebih Hemat")
 
-# --- MODUL 1: PRE-SCREENING (CEK KELAYAKAN) ---
-st.markdown("---")
-st.markdown("### 🔍 Cek Kelayakan Awal")
-st.write("Silakan isi data singkat di bawah ini untuk melihat potensi pengakuan SKS Anda.")
+    st.markdown("---")
+    st.subheader("🔍 Cek Kelayakan Awal")
+    c1, c2 = st.columns(2)
+    with c1:
+        ijazah = st.selectbox("Ijazah Terakhir", ["Pilih", "SMA/SMK/MA", "Diploma", "Putus Kuliah"])
+        masa_kerja = st.number_input("Masa Kerja (Tahun)", min_value=0)
+    with c2:
+        bidang_kerja = st.text_input("Bidang Pekerjaan", placeholder="Contoh: Perbankan")
 
-c1, c2 = st.columns(2)
-with c1:
-    ijazah = st.selectbox("Ijazah Terakhir", 
-                        ["Pilih Ijazah", "SMA/SMK/MA Sederajat", "Diploma (D1/D2/D3)", "Pernah Kuliah (Putus Studi)"])
-    masa_kerja = st.number_input("Total Masa Kerja (Tahun)", min_value=0, max_value=40, step=1)
-
-with c2:
-    bidang = st.text_input("Bidang Pekerjaan (Contoh: Perbankan, Guru, Admin)")
-    st.caption("Pilih bidang yang paling dominan dalam karir Anda.")
-
-if st.button("Analisis Potensi Saya"):
-    if ijazah == "Pilih Ijazah":
-        st.error("Mangga pilih ijazah terakhir Akang/Teteh dulu.")
-    elif masa_kerja < 2:
-        st.warning("⚠️ Berdasarkan pedoman, masa kerja di bawah 2 tahun memiliki potensi pengakuan yang terbatas. Disarankan minimal 2 tahun pengalaman relevan.")
-    else:
-        st.success(f"🚀 Hasil Analisis: Anda memiliki potensi tinggi untuk program RPL di bidang {bidang}!")
-        st.balloons()
-# --- REVISI MODUL 2: BAGIAN KLAIM BERBASIS NARASI ---
+    if st.button("Analisis Potensi"):
+        if masa_kerja >= 2:
+            st.success(f"Potensi Tinggi! Pengalaman di {bidang_kerja} sangat mendukung.")
+            st.balloons()
+        else:
+            st.warning("Masa kerja minimal disarankan 2 tahun.")
 
 with tab2:
-    st.header("Formulir E-Portofolio RPL")
-    
-    with st.form("form_rpl_narasi"):
-        st.subheader("1. Identitas Pelamar")
+    st.header("Formulir E-Portofolio")
+    st.write("Ceritakan keahlian Anda di sini.")
+
+    # Bagian Form (Penting: semua di bawah ini harus menjorok ke dalam)
+    with st.form("form_utama"):
         nama = st.text_input("Nama Lengkap")
         nik = st.text_input("NIK", max_chars=16)
-
-        st.divider()
-
-        # Bagian ini yang kita buat jadi Free-Text
-        st.subheader("2. Deskripsi Profesional")
-        st.info("Tuliskan bidang pekerjaan dan keahlian utama yang Anda kuasai. Penjelasan ini akan membantu kami memetakan pengalaman Anda ke mata kuliah yang relevan.")
         
-        sektor_mandiri = st.text_input("Sektor/Bidang Pekerjaan Anda", 
-                                      placeholder="Contoh: Perbankan Syariah, Industri Kreatif, Aparatur Desa, dll.")
-        
-        keahlian_utama = st.text_area("Sebutkan Kemampuan/Keahlian Utama Anda", 
-                                      placeholder="Contoh: Penyusunan laporan keuangan, Manajemen stok barang, Analisis risiko kredit, dll.",
-                                      help="Sebutkan minimal 3 kemampuan teknis yang Anda kuasai di pekerjaan.")
-
-        narasi_portofolio = st.text_area("Uraikan Pengalaman Kerja Anda (Kontekstual)", 
-                                         placeholder="Ceritakan detail tugas harian Anda yang menurut Anda setara dengan materi perkuliahan...",
-                                         height=200)
-
         st.divider()
-
-        st.subheader("3. Bukti Pendukung")
-        uploaded_files = st.file_uploader("Unggah Sertifikat, SK, atau Portofolio", accept_multiple_files=True)
-
-        st.warning("Pastikan data asli. Ketidaksesuaian data dapat membatalkan proses RPL.")
-        setuju = st.checkbox("Saya menjamin keaslian dokumen ini.")
-
-        btn_kirim = st.form_submit_button("Kirim Pengajuan")
-
-        if btn_kirim:
-            if not setuju:
-                st.error("Centang dulu pernyataan keasliannya ya, Kang.")
+        
+        st.subheader("Deskripsi Pengalaman & Keahlian")
+        sektor = st.text_input("Sektor Pekerjaan", placeholder="Misal: Administrasi Desa")
+        keahlian = st.text_area("Sebutkan Keahlian Utama", placeholder="1. Kelola Keuangan\n2. Arsip Data")
+        narasi = st.text_area("Ceritakan Pengalaman Kerja Anda", height=150)
+        
+        st.divider()
+        
+        st.subheader("Bukti Dokumen")
+        files = st.file_uploader("Unggah Bukti (SK/Sertifikat)", accept_multiple_files=True)
+        
+        setuju = st.checkbox("Saya menjamin keaslian data ini.")
+        
+        submit = st.form_submit_button("Kirim Pengajuan")
+        
+        if submit:
+            if setuju and nama:
+                st.success(f"Data {nama} berhasil direkam!")
             else:
-                st.success("Data berhasil direkam. Tim Asesor akan melakukan pemetaan (mapping) terhadap narasi Anda.")
+                st.error("Mohon isi nama dan centang pernyataan setuju.")
