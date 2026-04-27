@@ -170,27 +170,6 @@ with tab3:
                 st.write("📌 *Hasil asesmen siap dikirim ke bagian akademik untuk diterbitkan SK.*")
     else:
         st.info("Belum ada data pendaftar.")
-# --- FITUR DOWNLOAD HASIL ---
-            st.divider()
-            
-            # Menyiapkan data untuk didownload (Format CSV sederhana)
-            hasil_data = {
-                "Kategori": ["Diakui", "Wajib Tempuh"],
-                "Daftar MK": [
-                    ", ".join([m['nama'] for m in mk_diakui]),
-                    ", ".join([m['nama'] for m in mk_harus_tempuh])
-                ],
-                "Total SKS Diakui": [total_sks_diakui, ""]
-            }
-            df_hasil = pd.DataFrame(hasil_data)
-            csv_hasil = df_hasil.to_csv(index=False).encode('utf-8')
-
-            st.download_button(
-                label="📥 Cetak / Download Hasil Asesmen (CSV)",
-                data=csv_hasil,
-                file_name=f"Hasil_Asesmen_{pilih_nama}.csv",
-                mime="text/csv",
-            )
 # 4. FOOTER
 st.divider()
 st.markdown("<p style='text-align: center; color: gray; font-style: italic;'>Dikembangkan oleh Yuhkasun © 2026</p>", unsafe_allow_html=True)
