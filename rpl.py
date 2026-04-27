@@ -113,30 +113,61 @@ with tab2:
 
 # --- TAB 3: PANEL ASESOR ---
 with tab3:
-    st.header("Halaman Khusus Asesor")
+    st.header("⚖️ Instrumen Asesmen RPL")
     nama_file = "data_pendaftar_rpl.csv"
 
     if os.path.exists(nama_file):
         df_admin = pd.read_csv(nama_file)
-        st.write(f"Total Pengajuan: **{len(df_admin)}**")
-        st.dataframe(df_admin, use_container_width=True)
-        
-        st.divider()
-        st.subheader("Aksi Penilaian")
-        pilih_nama = st.selectbox("Pilih Pendaftar:", df_admin["Nama"].tolist())
+        pilih_nama = st.selectbox("Pilih Pendaftar untuk Dikaji:", df_admin["Nama"].tolist())
         
         if pilih_nama:
             user_data = df_admin[df_admin["Nama"] == pilih_nama].iloc[0]
-            st.info(f"**Narasi {pilih_nama}:**\n\n{user_data['Narasi_Pengalaman']}")
             
-            c_a, c_b = st.columns(2)
-            with c_a:
-                sks = st.number_input("SKS Diakui", 0, 24)
-            with c_b:
-                status = st.selectbox("Status", ["Menunggu", "Disetujui", "Ditolak"])
+            # --- TAMPILAN SIDE BY SIDE ---
+            col_data, col_check = st.columns([1, 1])
             
-            if st.button("Simpan Penilaian"):
-                st.success("Penilaian berhasil dicatat!")
+            with col_data:
+                st.subheader("📝 Data Pengalaman")
+                st.info(f"**Sektor:** {user_data['Sektor']}\n\n**Keahlian:** {user_data['Keahlian']}")
+                st.write("**Narasi Lengkap:**")
+                st.caption(user_data['Narasi_Pengalaman'])
+            
+            with col_check:
+                st.subheader("✅ Checklist Penyetaraan MK")
+                st.write("Pilih MK yang sesuai dengan narasi di samping:")
+                
+                # Checklist Instrumen
+                mk_diakui = []
+                for mk in DB_KURIKULUM:
+                    check = st.checkbox(f"{mk['kode']} - {mk['nama']} ({mk['sks']} SKS)", key=mk['kode'])
+                    if check:
+                        mk_diakui.append(mk)
+                
+            st.divider()
+            
+            # --- HASIL OUTPUT SESUAI PERMINTAAN AKANG ---
+            st.subheader("📊 Hasil Rekomendasi RPL")
+            
+            # 1. MK yang Sesuai (Diakui)
+            total_sks_diakui = sum([m['sks'] for m in mk_diakui])
+            st.success(f"**1. Mata Kuliah yang Diakui (Sesuai Pengalaman):** {len(mk_diakui)} MK")
+            if mk_diakui:
+                df_diakui = pd.DataFrame(mk_diakui)
+                st.table(df_diakui)
+            
+            # 2. MK yang Harus Ditempuh
+            # (Logika: Semua MK di kurikulum dikurangi yang sudah diakui)
+            mk_harus_tempuh = [m for m in DB_KURIKULUM if m not in mk_diakui]
+            st.warning(f"**2. Mata Kuliah yang Harus Ditempuh:** {len(mk_harus_tempuh)} MK")
+            if mk_harus_tempuh:
+                df_sisa = pd.DataFrame(mk_harus_tempuh)
+                st.table(df_sisa)
+            
+            st.metric("Total SKS Diakui", f"{total_sks_diakui} SKS")
+
+            if st.button("Finalisasi & Cetak Hasil Asesmen"):
+                st.balloons()
+                st.write("📌 *Hasil asesmen siap dikirim ke bagian akademik untuk diterbitkan SK.*")
     else:
         st.info("Belum ada data pendaftar.")
 
