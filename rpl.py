@@ -1,5 +1,7 @@
 import streamlit as st
-
+import streamlit as st
+import pandas as pd  # <--- Tambah ini
+import os            # <--- Tambah ini untuk urusan file
 # 1. KONFIGURASI HALAMAN
 st.set_page_config(
     page_title="RPL Unisba - Yuhkasun", 
@@ -93,15 +95,34 @@ with tab2:
         # Submit Button
         submit_final = st.form_submit_button("Kirim Pengajuan RPL")
         
-        if submit_final:
+if submit_final:
             if not pernyataan:
                 st.error("Anda harus menyetujui pernyataan keaslian data.")
             elif not nama_lengkap or not cerita_kerja:
                 st.error("Nama dan Deskripsi Pengalaman tidak boleh kosong.")
             else:
-                st.success(f"Alhamdulillah, data {nama_lengkap} telah berhasil direkam dalam sistem!")
-                st.info("Tim Asesor Universitas Islam Bandung akan segera melakukan pemetaan terhadap narasi Anda.")
+                # --- PROSES SIMPAN DATA (OPSI 2) ---
+                nama_file = "data_pendaftar_rpl.csv"
+                
+                # Menyiapkan data baru dari input user
+                data_baru = {
+                    "Nama": [nama_lengkap],
+                    "NIK": [nik_user],
+                    "Sektor": [sektor_pekerjaan],
+                    "Keahlian": [keahlian_list],
+                    "Narasi_Pengalaman": [cerita_kerja]
+                }
+                df_baru = pd.DataFrame(data_baru)
 
+                # Simpan ke CSV (Append jika file sudah ada)
+                if not os.path.isfile(nama_file):
+                    df_baru.to_csv(nama_file, index=False)
+                else:
+                    df_baru.to_csv(nama_file, mode='a', index=False, header=False)
+
+                st.success(f"Alhamdulillah, data {nama_lengkap} telah berhasil disimpan!")
+                st.balloons()
+                st.info(f"Data tersimpan di file: {nama_file}")
 # 4. FOOTER (Catatan Pengembangan)
 st.divider()
 st.markdown(
