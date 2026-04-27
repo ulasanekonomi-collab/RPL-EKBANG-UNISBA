@@ -54,52 +54,25 @@ if st.button("Analisis Potensi Saya"):
     else:
         st.success(f"🚀 Hasil Analisis: Anda memiliki potensi tinggi untuk program RPL di bidang {bidang}!")
         st.balloons()
-# --- LANJUTAN KODE DI rpl.py ---
+# Ganti bagian multiselect MK yang kaku tadi dengan ini:
 
-st.markdown("---")
-# Membuat Tab agar navigasi lebih enak dilihat
-tab1, tab2 = st.tabs(["📋 Informasi & Cek Kelayakan", "📤 Pengajuan E-Portofolio"])
+st.subheader("2. Portofolio Pengalaman")
+st.info("Pilih bidang pengalaman yang Anda miliki. Kami akan membantu memetakan ke kurikulum kami.")
 
-with tab1:
-    st.write("Silakan gunakan form di atas untuk mengecek kelayakan awal.")
-    # (Kode cek kelayakan yang tadi sudah ada di sini otomatis kalau kita pindahkan ke tab)
+bidang_exp = st.selectbox("Sektor Pengalaman Dominan:", 
+                         ["Pilih Sektor", "Perbankan & Keuangan", "Wirausaha/UMKM", "Administrasi Publik", "Analisis Data/Statistik"])
 
-with tab2:
-    st.header("Formulir E-Portofolio RPL")
-    st.write("Lengkapi data dan unggah bukti kompetensi Anda di bawah ini.")
+if bidang_exp == "Perbankan & Keuangan":
+    st.write("👉 **Kompetensi yang dapat diakui:** Analisis Kredit, Manajemen Risiko, Operasional Bank.")
+    st.caption("Potensi Mata Kuliah: Manajemen Perbankan, Ekonomi Moneter, Akuntansi.")
+    
+elif bidang_exp == "Wirausaha/UMKM":
+    st.write("👉 **Kompetensi yang dapat diakui:** Perencanaan Bisnis, Strategi Pemasaran, Kelayakan Investasi.")
+    st.caption("Potensi Mata Kuliah: Kewirausahaan, Manajemen Pemasaran, Evaluasi Proyek.")
 
-    with st.form("form_rpl"):
-        # 1. Identitas
-        st.subheader("1. Identitas Pelamar")
-        nama = st.text_input("Nama Lengkap (Sesuai Ijazah)")
-        nik = st.text_input("Nomor Induk Kependudukan (NIK)", max_chars=16)
-        
-        # 2. Mata Kuliah yang Diklaim
-        st.subheader("2. Klaim Mata Kuliah")
-        st.info("Pilih mata kuliah yang menurut Anda relevan dengan pengalaman kerja Anda.")
-        
-        mk_pilihan = st.multiselect("Pilih Mata Kuliah:", 
-                                   ["Ekonomi Makro", "Manajemen Keuangan", "Kewirausahaan", "Pemasaran Digital", "Akuntansi Dasar"])
-        
-        deskripsi_pengalaman = st.text_area("Jelaskan secara singkat mengapa Anda layak mendapatkan pembebasan MK tersebut:", 
-                                         placeholder="Contoh: Saya sudah bekerja sebagai Manajer Keuangan selama 5 tahun...")
+# Biarkan user mengisi narasi kompetensi, bukan memilih kode MK yang membingungkan
+kemampuan = st.multiselect("Kemampuan apa saja yang Anda kuasai secara profesional?", 
+                          ["Menyusun Laporan Keuangan", "Melakukan Analisis Pasar", "Mengelola SDM", "Menggunakan Software Statistik", "Perencanaan Anggaran"])
 
-        # 3. Unggah Berkas Bukti
-        st.subheader("3. Unggah Bukti Kompetensi")
-        st.caption("Unggah bukti berupa CV, Sertifikat Pelatihan, SK Kerja, atau Portofolio (Format PDF/JPG)")
-        uploaded_files = st.file_uploader("Pilih Berkas", accept_multiple_files=True)
-
-        # 4. Pernah Dokumen (Penting menurut Juknis!)
-        st.warning("Pastikan seluruh dokumen yang Anda unggah adalah asli dan dapat dipertanggungjawabkan secara hukum.")
-        setuju = st.checkbox("Saya menyatakan bahwa data yang saya berikan adalah benar.")
-
-        submit_button = st.form_submit_button("Kirim Pengajuan RPL")
-
-        if submit_button:
-            if not setuju:
-                st.error("Silakan centang kotak pernyataan keaslian dokumen dulu, Kang.")
-            elif not nama or not nik:
-                st.error("Nama dan NIK jangan dikosongkan ya.")
-            else:
-                st.success(f"Alhamdulillah, data atas nama {nama} berhasil dikirim! Tim Asesor akan segera memeriksa dokumen Anda.")
-                # Di sini nanti bisa ditambah fungsi untuk simpan ke database atau kirim email
+deskripsi_pengalaman = st.text_area("Deskripsikan detail pekerjaan/tugas yang mendukung kemampuan tersebut:", 
+                                     placeholder="Ceritakan aktivitas harian Anda yang relevan...")
