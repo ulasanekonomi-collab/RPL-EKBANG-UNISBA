@@ -148,3 +148,46 @@ st.markdown(
     """, 
     unsafe_allow_html=True
 )
+# --- TAB 3: PANEL ASESOR ---
+with tab3:
+    st.header("Halaman Khusus Asesor")
+    st.write("Daftar pengajuan RPL yang perlu ditinjau.")
+
+    nama_file = "data_pendaftar_rpl.csv"
+
+    if os.path.exists(nama_file):
+        # Membaca data dari CSV
+        df_admin = pd.read_csv(nama_file)
+        
+        # Menampilkan ringkasan statistik sederhana
+        st.write(f"Total Pengajuan: **{len(df_admin)}**")
+        
+        # Menampilkan tabel data
+        st.dataframe(df_admin, use_container_width=True)
+        
+        st.divider()
+        st.subheader("Aksi Penilaian")
+        
+        # Fitur memilih pendaftar untuk dinilai
+        pilih_nama = st.selectbox("Pilih Pendaftar untuk Dinilai:", df_admin["Nama"].tolist())
+        
+        if pilih_nama:
+            # Ambil data spesifik pendaftar yang dipilih
+            user_data = df_admin[df_admin["Nama"] == pilih_nama].iloc[0]
+            
+            st.info(f"**Narasi Pengalaman {pilih_nama}:**\n\n{user_data['Narasi_Pengalaman']}")
+            
+            # Form Penilaian SKS
+            col_a, col_b = st.columns(2)
+            with col_a:
+                sks_diakui = st.number_input("Jumlah SKS yang Diakui", min_value=0, max_value=24, step=1)
+            with col_b:
+                keputusan = st.selectbox("Status Verifikasi", ["Menunggu", "Disetujui", "Ditolak", "Butuh Wawancara"])
+            
+            catatan_asesor = st.text_area("Catatan Tambahan Asesor")
+            
+            if st.button("Simpan Penilaian"):
+                st.success(f"Penilaian untuk {pilih_nama} berhasil disimpan!")
+                # (Nanti kita bisa buat sistem simpan penilaian ke file berbeda)
+    else:
+        st.info("Belum ada data pendaftar yang masuk.")
