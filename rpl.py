@@ -13,7 +13,7 @@ st.set_page_config(
 col1, col2 = st.columns([1, 5])
 with col1:
     # Menggunakan URL logo Unisba
-    st.image("https://upload.wikimedia.org/wikipedia/id/8/8c/Logo_Unisba.png", width=100) 
+    st.image("https://id.wikipedia.org/wiki/Berkas:Lambang-Universitas_Islam_Bandung.png", width=100) 
 with col2:
     st.title("Portal Rekognisi Pembelajaran Lampau (RPL)")
     st.subheader("Universitas Islam Bandung")
