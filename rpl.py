@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import os
+from ica_ekonometrika import render_ekonometrika
 
 # 1. KONFIGURASI HALAMAN
 st.set_page_config(page_title="RPL Unisba - Yuhkasun", page_icon="🎓", layout="wide")
@@ -35,7 +36,7 @@ with col2:
 st.divider()
 
 # 4. NAVIGASI TAB
-tab1, tab2, tab3 = st.tabs(["📋 Informasi", "📤 Pengajuan E-Portofolio", "📊 Panel Asesor"])
+tab1, tab2, tab3, tab4 = st.tabs(["📋 Informasi", "📤 Pengajuan E-Portofolio", "📊 Panel Asesor", "🧮 Asesmen Mata Kuliah"])
 
 # --- TAB 1: INFORMASI ---
 with tab1:
@@ -125,6 +126,9 @@ with tab3:
                 st.download_button("📥 Download Hasil", res_df.to_csv().encode('utf-8'), f"RPL_{pilih_nama}.csv", "text/csv")
     else:
         st.info("Belum ada data pendaftar.")
+
+with tab4:
+    render_ekonometrika(st)
 
 # 5. FOOTER (Catatan Pengembangan)
 st.divider()
