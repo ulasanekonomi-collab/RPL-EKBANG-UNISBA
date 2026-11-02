@@ -33,8 +33,8 @@ def render_ekonometrika(st):
         c.metric("Model", "ICA")
         st.markdown("**CPMK yang dinilai**")
         st.markdown(
-            "- CPMK-1: Menerapkan OLS, GLS, dan model data panel.\\n"
-            "- CPMK-2: Menggunakan Stata, EViews, R, atau Python untuk estimasi, pengujian, dan penyajian.\\n"
+            "- CPMK-1: Menerapkan OLS, GLS, dan model data panel.\n"
+            "- CPMK-2: Menggunakan Stata, EViews, R, atau Python untuk estimasi, pengujian, dan penyajian.\n"
             "- CPMK-3: Menginterpretasikan dan mengevaluasi validitas hasil estimasi."
         )
         st.markdown("**Kasus:** Analisis faktor-faktor yang berhubungan dengan tingkat kemiskinan daerah.")
@@ -74,16 +74,16 @@ def render_ekonometrika(st):
         st.error("Seluruh nama wilayah dan angka merupakan data sintetis, bukan data BPS atau wilayah nyata.")
         st.markdown("**Tahapan tugas wajib**")
         st.markdown(
-            "1. Rumuskan masalah, variabel, dan spesifikasi model.\\n"
-            "2. Periksa data, statistik deskriptif, dan estimasi OLS.\\n"
-            "3. Lakukan diagnosis dan estimasi GLS/FGLS atau pendekatan koreksi yang dijustifikasi.\\n"
-            "4. Estimasi pooled, fixed effect, dan random effect serta uji pemilihan model.\\n"
-            "5. Interpretasikan hasil, evaluasi validitas, dan susun kesimpulan.\\n"
+            "1. Rumuskan masalah, variabel, dan spesifikasi model.\n"
+            "2. Periksa data, statistik deskriptif, dan estimasi OLS.\n"
+            "3. Lakukan diagnosis dan estimasi GLS/FGLS atau pendekatan koreksi yang dijustifikasi.\n"
+            "4. Estimasi pooled, fixed effect, dan random effect serta uji pemilihan model.\n"
+            "5. Interpretasikan hasil, evaluasi validitas, dan susun kesimpulan.\n"
             "6. Presentasikan pekerjaan dan ikuti verifikasi lisan."
         )
         st.markdown("**Keluaran wajib:** laporan PDF 8–15 halaman, dataset kerja, syntax/script, output estimasi dan pengujian, presentasi, referensi, serta deklarasi penggunaan AI.")
         st.markdown("**Transfer ke data empiris BPS (pengayaan):** dokumentasikan sumber, definisi, periode referensi, satuan, dan harmonisasi. Jangan mengisi nilai hilang dengan perkiraan.")
-        st.markdown("- [BPS](https://www.bps.go.id/)\\n- [Bappenas — Profil dan Analisis Daerah](https://prada.bappenas.go.id/)")
+        st.markdown("- [BPS](https://www.bps.go.id/)\n- [Bappenas — Profil dan Analisis Daerah](https://prada.bappenas.go.id/)")
 
     with asesor:
         st.subheader("Rubrik penilaian analitik")
